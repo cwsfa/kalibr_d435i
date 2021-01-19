@@ -32,6 +32,8 @@ $ cd .. && catkin build
 
 # Type in ~/.bashrc
 alias ks='source ~/karlib_ws/devel/setup.bash'
+
+# And git clone this repository
 ```
 
 ## Stereo Camera calibration
