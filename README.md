@@ -31,7 +31,7 @@ $ git clone https://github.com/ethz-asl/kalibr
 $ cd .. && catkin build
 
 # Type in ~/.bashrc
-alias ks='source ~/karlib_ws/devel/setup.bash'
+alias ks='source ~/kalibr_ws/devel/setup.bash'
 
 # And git clone this repository
 ```
@@ -131,4 +131,31 @@ $ rosrun topic_tools throttle messages /camera/imu 200.0 /imu
 $ rosbag record -O imu_stereo_d435i_20_200hz.bag  /left /right /imu
 #### change rostopic value of imu_d435i.yaml to /imu
 $ rosrun kalibr_calibrate_imu_camera --target ~/kalibr_d435i/april_6x6_80x80cm.yaml --cam ~/kalibr_d435i/calibrate_cameras/calibra_d435i.yaml --imu ~/kalibr_d435i/calibrate_imu_camera/imu_d435i.yaml --bag ~/kalibr_d435i/calibrate_imu_camera/imu_stereo_d435i_20_200hz.bag
+```
+
+## Make VINS-Fusion config file
+- camchain-imucam.yaml
+
+| d435i_stereo_imu.yaml | camchain-imucam.yaml | d435i_imu_param.yaml |
+|-----|---|---|
+|body_T_cam0|cam0:T_cam_imu||
+|body_T_cam1|cam1:T_cam_imu||
+|acc_n||acc_n|
+|gyr_n||gyr_n|
+|acc_w||acc_w|
+|gyr_w||gyr_w|
+
+- left.yaml, right.yaml
+
+| left.yaml & right.yaml | d435i_imu_param.yaml |
+|-----|---|
+|distortion_parameters|distortion_coeffs|
+|projection_parameters|intrinsics|
+
+## Run VINS-Fusion
+```
+$ roslaunch realsense2_camera rs_camera.launch
+$ roslaunch vins vins_rviz.launch
+$ rosrun vins vins_node ~/kalibr_d435i/calibrate_imu_camera/vins_config/d435i_stereo_imu.yaml 
+$ rosrun loop_fusion loop_fusion_node ~/kalibr_d435i/calibrate_imu_camera/vins_config/d435i_stereo_imu.yaml 
 ```
